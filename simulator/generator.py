@@ -100,5 +100,6 @@ def seq_generator(
     velocities = wheel_velocities_computer(
         v_vehicle, func_interp, m, freq, F_long, alpha
     )
+    # TODO : Transfer save csv to other function
     filename = f"{data_dir}/{filename}.csv"
     to_csv(velocities, filename)
