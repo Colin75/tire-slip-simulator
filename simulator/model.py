@@ -136,12 +136,12 @@ def wheel_slip_velocity(v_vehicle, F, slip_rate):
 
 def slip_velocities(v_vehicle, m, freq, F, k, verbose=False):
     """
-    Given an array of vehicle velocities, it computes an array of wheel slip velocities of same lenght.
+    Given an array of vehicle position, it computes an array of wheel slip position of same lenght.
 
     Parameters
     ----------
     v_vehicle : array_like
-        Input vehicle velocities in [m/s].
+        Input vehicle position in [m/s].
     m : float
         Mass of vehicle [kg].
     freq : int
@@ -154,7 +154,7 @@ def slip_velocities(v_vehicle, m, freq, F, k, verbose=False):
     Returns
     -------
     v_wheel_list : array
-        Wheel slip velocities.
+        Wheel slip position.
     Fx_list : array
         Propulsion.
     slips : array

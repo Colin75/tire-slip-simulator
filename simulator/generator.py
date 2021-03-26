@@ -1,12 +1,16 @@
+from typing import Callable
+
 from numpy import arange, asarray, interp, loadtxt, polyfit, polyval, savetxt, zeros
 from numpy.random import randint
+from torch import Tensor
 
 from simulator.model import slip_velocities
+from simulator.model_tracking_1D import derived
 
 
 def negative_value_thresholder(velocity):
     """
-    Force all negative velocities to zero value.
+    Force all negative position to zero value.
     """
     velocity[velocity < 0] = 0
     return velocity
@@ -62,6 +66,45 @@ def wheel_velocities_computer(velocities_vehicle, func_interp, m, freq, F, k):
     return velocities_set
 
 
+def init_dataset(input):
+    n_seq = input.shape[0]
+    x_limit = int(input[0, 0, -1])
+    return zeros([n_seq, 1, x_limit])
+
+
+# def data_interpolation(position, func_interp, dt):
+#     N_DERIVED = 3
+#     dataset = init_dataset(position, n_derived=N_DERIVED)
+#     for i, set in enumerate(position):
+#         dataset[i * N_DERIVED] = func_interp(set[0], set[1])
+#         dataset[(i * N_DERIVED + 1)], *_ = derived(dataset[i * N_DERIVED], dt)
+#         dataset[(i * N_DERIVED + 2)], *_ = derived(dataset[i * N_DERIVED + 1], dt)
+#     return dataset
+
+
+def data_interpolation(position, func_interp, dt):
+    dataset = init_dataset(position)
+    for i, set in enumerate(position):
+        dataset[i] = func_interp(set[0], set[1])
+    return dataset
+
+
+def add_derivation(
+    dataset: asarray, n_derived: int, func_derivation: Callable, dt: float
+):
+    dataset_expanded = zeros((dataset.shape[0], n_derived + 1, dataset.shape[-1]))
+    dataset_expanded[:, [0], :] = dataset
+    for i in range(n_derived):
+        dataset_expanded[:, [i + 1], :] = func_derivation(
+            dataset_expanded[:, [i], :], dt
+        )
+    return dataset_expanded
+
+
+def derivation(to_derive: Tensor, dt: Tensor) -> Tensor:
+    return to_derive / dt
+
+
 def to_csv(X, filename, **kwargs):
     savetxt(filename, X, delimiter=";", **kwargs)
 
@@ -103,3 +146,25 @@ def seq_generator(
     # TODO : Transfer save csv to other function
     filename = f"{data_dir}/{filename}.csv"
     to_csv(velocities, filename)
+
+
+def seq_generator_tracking(
+    y_breakpoints,
+    n_seq,
+    xp_rand,
+    func_interp,
+    freq,
+    n_points_interval,
+):  # sourcery skip: inline-immediately-returned-variable
+    n_breakpoints = len(y_breakpoints)
+    x_limit = int(n_breakpoints * n_points_interval / freq)
+    n_points_interval = int(n_points_interval / freq)
+    x_breakpoints = arange(0, x_limit, n_points_interval)
+    xy_breakpoints_rand = breakpoints_randomize(
+        x_breakpoints, y_breakpoints, n_seq, xp_rand=xp_rand, x_delta=5
+    )
+    y_interpolated = data_interpolation(xy_breakpoints_rand, func_interp, dt=1.0)
+    dataset = add_derivation(
+        dataset=y_interpolated, n_derived=2, func_derivation=derivation, dt=10.0
+    )
+    return dataset
