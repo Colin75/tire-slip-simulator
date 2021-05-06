@@ -5,7 +5,6 @@ from numpy.random import randint
 from torch import Tensor
 
 from simulator.model import slip_velocities
-from simulator.model_tracking_1D import derived
 
 
 def negative_value_thresholder(velocity):
@@ -95,14 +94,14 @@ def add_derivation(
     dataset_expanded = zeros((dataset.shape[0], n_derived + 1, dataset.shape[-1]))
     dataset_expanded[:, [0], :] = dataset
     for i in range(n_derived):
-        dataset_expanded[:, [i + 1], :] = func_derivation(
-            dataset_expanded[:, [i], :], dt
+        dataset_expanded[:, [i + 1], 1:] = func_derivation(
+            dataset_expanded[:, [i], :-1] - dataset_expanded[:, [i], 1:], dt
         )
     return dataset_expanded
 
 
-def derivation(to_derive: Tensor, dt: Tensor) -> Tensor:
-    return to_derive / dt
+def derivation(diff: Tensor, dt: Tensor) -> Tensor:
+    return diff / dt
 
 
 def to_csv(X, filename, **kwargs):
@@ -156,6 +155,8 @@ def seq_generator_tracking(
     freq,
     n_points_interval,
 ):  # sourcery skip: inline-immediately-returned-variable
+
+    N_DERIVED = 2
     n_breakpoints = len(y_breakpoints)
     x_limit = int(n_breakpoints * n_points_interval / freq)
     n_points_interval = int(n_points_interval / freq)
@@ -165,6 +166,7 @@ def seq_generator_tracking(
     )
     y_interpolated = data_interpolation(xy_breakpoints_rand, func_interp, dt=1.0)
     dataset = add_derivation(
-        dataset=y_interpolated, n_derived=2, func_derivation=derivation, dt=10.0
+        dataset=y_interpolated, n_derived=N_DERIVED, func_derivation=derivation, dt=10.0
     )
+    dataset = dataset.reshape(n_seq*(N_DERIVED+1), -1)
     return dataset
