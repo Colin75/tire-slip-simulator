@@ -1,6 +1,6 @@
 from simulator.generator import linear_interp, seq_generator
 from simulator.model import magic_formula
-from simulator.utils import subplots_dataset
+from simulator.viz import subplots_dataset_tireslip
 
 # System character
 m = 300  # mass
@@ -48,8 +48,8 @@ seq_generator(
     data_dir="../dataset",
 )
 
-subplots_dataset(
+subplots_dataset_tireslip(
     f"../dataset/linear_n_seq_{n_train_seq}_step_{step_breakpoint}_freq_{freq}.csv",
-    nrows=4,
-    ncols=4,
+    n_rows=4,
+    n_cols=4,
 )

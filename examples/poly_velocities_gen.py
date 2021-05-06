@@ -1,6 +1,6 @@
 from simulator.generator import polyn_interp, seq_generator
 from simulator.model import magic_formula
-from simulator.utils import subplots_dataset
+from simulator.viz import subplots_dataset_tireslip
 
 # Model parameters
 m = 300  # mass
@@ -43,4 +43,4 @@ seq_generator(
     data_dir="../dataset",
 )
 
-subplots_dataset("./dataset/dataset_poly_step_20_freq_1.csv", nrows=4, ncols=4)
+subplots_dataset_tireslip("./dataset/dataset_poly_step_20_freq_1.csv", n_rows=4, n_cols=4)

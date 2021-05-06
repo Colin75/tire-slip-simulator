@@ -54,7 +54,7 @@ def curve_switch_value(array):
 
 def switcher(switch_value, v0, v1, switch_state, verbose):
     """
-    It updates the switch state according input values, either "left" of the switch value or "right",
+    It updates the switch state according inp values, either "left" of the switch value or "right",
     respectively swith_state = 0 and switch_state = 1.
     """
     if abs(v0) < switch_value < abs(v1):
@@ -149,7 +149,7 @@ def slip_velocities(v_vehicle, m, freq, F, k, verbose=False):
     F : array_like
         Propulsion given by Magic formula [1].
     k : array_like
-        Slip ratio used as input to compute propulsion Func [1].
+        Slip ratio used as inp to compute propulsion Func [1].
 
     Returns
     -------
