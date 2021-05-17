@@ -95,7 +95,7 @@ def add_derivation(
     dataset_expanded[:, [0], :] = dataset
     for i in range(n_derived):
         dataset_expanded[:, [i + 1], 1:] = func_derivation(
-            dataset_expanded[:, [i], :-1] - dataset_expanded[:, [i], 1:], dt
+            dataset_expanded[:, [i], 1:] - dataset_expanded[:, [i], :-1], dt
         )
     return dataset_expanded
 
