@@ -1,4 +1,4 @@
-from simulator.generator import linear_interp, seq_generator
+from simulator.generator import linear_interp, seq_generator_tire_slip, to_csv
 from simulator.model import magic_formula
 from simulator.viz import subplots_dataset_tireslip
 
@@ -18,8 +18,8 @@ v_vehicle_breaks = (10, 10, 110, 20, 40, 40, 100, 70, 10, 110, 50, 5, 5, 60, 100
 # fmt: on
 F_long, alpha = magic_formula(p)
 
-n_train_seq = 10
-seq_generator(
+n_train_seq = 200
+velocities = seq_generator_tire_slip(
     v_vehicle_breaks,
     n_seq=n_train_seq,
     xp_rand=True,
@@ -29,27 +29,12 @@ seq_generator(
     step_breakpoint=step_breakpoint,
     F_long=F_long,
     alpha=alpha,
-    filename=f"linear_n_seq_{n_train_seq}_step_{step_breakpoint}_freq_{freq}",
-    data_dir="../dataset",
 )
 
-n_test_seq = 300
-seq_generator(
-    v_vehicle_breaks,
-    n_seq=n_test_seq,
-    xp_rand=True,
-    func_interp=linear_interp,
-    m=m,
-    freq=freq,
-    point_per_step=step_breakpoint,
-    F_long=F_long,
-    alpha=alpha,
-    filename=f"linear_n_seq_{n_test_seq}_step_{step_breakpoint}_freq_{freq}_TEST",
-    data_dir="../dataset",
-)
+to_csv(velocities, f"./dataset/linear_n_seq_{n_train_seq}_step_{step_breakpoint}_freq_{freq}.csv")
 
 subplots_dataset_tireslip(
-    f"../dataset/linear_n_seq_{n_train_seq}_step_{step_breakpoint}_freq_{freq}.csv",
+    f"./dataset/linear_n_seq_{n_train_seq}_step_{step_breakpoint}_freq_{freq}.csv",
     n_rows=4,
     n_cols=4,
 )

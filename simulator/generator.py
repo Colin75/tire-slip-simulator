@@ -120,7 +120,7 @@ def batch_dataset(filename, batch_size, seq_size=None):
     return dataset
 
 
-def seq_generator(
+def seq_generator_tire_slip(
     y_breakpoints,
     n_seq,
     xp_rand,
@@ -130,8 +130,6 @@ def seq_generator(
     step_breakpoint,
     F_long,
     alpha,
-    filename,
-    data_dir="./dataset",
 ):
     seq_end = int(len(y_breakpoints) * step_breakpoint / freq)
     step = int(step_breakpoint / freq)
@@ -142,10 +140,8 @@ def seq_generator(
     velocities = wheel_velocities_computer(
         v_vehicle, func_interp, m, freq, F_long, alpha
     )
-    # TODO : Transfer save csv to other function
-    filename = f"{data_dir}/{filename}.csv"
-    to_csv(velocities, filename)
 
+    return velocities
 
 def seq_generator_tracking(
     y_breakpoints,

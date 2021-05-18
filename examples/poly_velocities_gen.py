@@ -1,4 +1,4 @@
-from simulator.generator import polyn_interp, seq_generator
+from simulator.generator import polyn_interp, seq_generator_tire_slip
 from simulator.model import magic_formula
 from simulator.viz import subplots_dataset_tireslip
 
@@ -15,7 +15,7 @@ yp = (10, 10, 90, 30, 30, 120, 100, 80, 10, 80, 50, 70)
 # fmt: on
 F_long, alpha = magic_formula(p)
 
-seq_generator(
+seq_generator_tire_slip(
     yp,
     n_seq=1500,
     xp_rand=True,
@@ -29,7 +29,7 @@ seq_generator(
     data_dir="../dataset",
 )
 
-seq_generator(
+seq_generator_tire_slip(
     yp,
     n_seq=500,
     xp_rand=True,
